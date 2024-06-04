@@ -1,57 +1,77 @@
-import java.util.Scanner;
+ import javafx.application.Application;
+ import javafx.scene.Scene;
+ import javafx.scene.control.*;
+ import javafx.scene.layout.*;
+ import javafx.stage.Stage;
+ public class LoginApp extends Application {
+    private static final String CORRECT_USERNAME = "admin";
+    private static final String CORRECT_PASSWORD = "password";
 
-class Mahasiswa {
-    String nama;
-    String nim;
-    String jurusan;
-    int usia;
-    String universitas = "Universitas ABC";
+    private Stage primaryStage;
+    private BorderPane loginPane;
+    private BorderPane mainPane;
 
-    public Mahasiswa(String nama, String nim, String jurusan, int usia) {
-        this.nama = nama;
-        this.nim = nim;
-        this.jurusan = jurusan;
-        this.usia = usia;
-    }
-
-    public void tampilDataMahasiswa() {
-        System.out.println("Nama: " + nama);
-        System.out.println("NIM: " + nim);
-        System.out.println("Jurusan: " + jurusan);
-        System.out.println("Usia: " + usia);
-    }
-
-    public static void tampilUniversitas() {
-        System.out.println("Universitas: Universitas ABC");
-    }
-}
-
-public class Main {
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
+        launch(args);
+    }
 
-        System.out.println("Masukkan nama mahasiswa:");
-        String nama = scanner.nextLine();
+    @Override
+    public void start(Stage primaryStage) {
+        this.primaryStage = primaryStage;
+        setupLoginPane();
+        setupMainPane();
 
-        System.out.println("Masukkan NIM mahasiswa (panjang maksimal 15 karakter):");
-        String nim = scanner.nextLine();
-        while (nim.length() > 15) {
-            System.out.println("NIM terlalu panjang! Masukkan kembali:");
-            nim = scanner.nextLine();
-        }
+        Scene scene = new Scene(loginPane, 400, 300);
+        primaryStage.setTitle("Login App");
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
 
-        System.out.println("Masukkan jurusan mahasiswa:");
-        String jurusan = scanner.nextLine();
+    private void setupLoginPane() {
+        loginPane = new BorderPane();
+        VBox loginBox = new VBox(10);
+        loginBox.setPadding(new Insets(20));
 
-        System.out.println("Masukkan usia mahasiswa:");
-        int usia = scanner.nextInt();
+        Label titleLabel = new Label("Login");
+        titleLabel.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
+        TextField usernameField = new TextField();
+        PasswordField passwordField = new PasswordField();
+        Button loginButton = new Button("Login");
 
-        Mahasiswa mahasiswa = new Mahasiswa(nama, nim, jurusan, usia);
+        loginButton.setOnAction(e -> {
+            String username = usernameField.getText();
+            String password = passwordField.getText();
 
-        System.out.println("\nDetail Mahasiswa:");
-        mahasiswa.tampilDataMahasiswa();
+            if (username.equals(CORRECT_USERNAME) && password.equals(CORRECT_PASSWORD)) {
+                showMainPage();
+            } else {
+                showAlert("Username or password is incorrect.");
+            }
+        });
 
-        System.out.println("\nInfo Universitas:");
-        Mahasiswa.tampilUniversitas();
+        loginBox.getChildren().addAll(titleLabel, new Label("Username:"), usernameField,
+                new Label("Password:"), passwordField, loginButton);
+        loginPane.setCenter(loginBox);
+    }
+
+    private void setupMainPane() {
+        mainPane = new BorderPane();
+        Label welcomeLabel = new Label("Welcome to the Main Page!");
+        welcomeLabel.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
+        mainPane.setCenter(welcomeLabel);
+    }
+
+    private void showMainPage() {
+        Scene mainScene = new Scene(mainPane, 400, 300);
+        primaryStage.setScene(mainScene);
+        primaryStage.setTitle("Main Page");
+    }
+
+    private void showAlert(String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Error");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 }
